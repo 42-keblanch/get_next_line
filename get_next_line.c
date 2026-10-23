@@ -1,0 +1,107 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: keblanch <keblanch@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/10/23 11:24:09 by keblanch          #+#    #+#             */
+/*   Updated: 2026/10/23 11:24:20 by keblanch         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "get_next_line.h"
+#include <stddef.h>
+#include <unistd.h>
+#include <stdlib.h>
+
+static int	concat(char **dest, char *src)
+{
+	size_t	dest_len;
+	size_t	src_len;
+	char	*t;
+
+	if (!(*dest) || !src)
+		return (0);
+	dest_len = ft_strlen(*dest, '\0');
+	src_len = ft_strlen(src, '\0');
+	t = ft_calloc(dest_len + src_len + 1, sizeof(char));
+	if (!t)
+		return (0);
+	ft_memcpy(t, (*dest), dest_len);
+	ft_memcpy(t + dest_len, src, src_len);
+	free((*dest));
+	(*dest) = t;
+	return (1);
+}
+
+static int	read_from_file(int fd, char **leftover)
+{
+	char	*buf;
+	int		bytes_read;
+
+	if (!(*leftover))
+	{
+		*leftover = ft_calloc(1, sizeof(char));
+	}
+	buf = ft_calloc(BUFFER_SIZE + 1, sizeof(char));
+	bytes_read = 1;
+	while (bytes_read > 0 && !check_for_nl(*leftover))
+	{
+		bytes_read = read(fd, buf, BUFFER_SIZE);
+		if (bytes_read < 0)
+		{
+			free(buf);
+			free(*leftover);
+			*leftover = NULL;
+			return (bytes_read);
+		}
+		buf[bytes_read] = '\0';
+		concat(leftover, buf);
+	}
+	free(buf);
+	return (bytes_read);
+}
+
+static char	*extract_line(char *leftover)
+{
+	char	*ret;
+	size_t	i;
+	size_t	leftover_len;
+
+	if (!leftover[0])
+		return (NULL);
+	i = ft_strlen(leftover, '\n');
+	if (leftover[i] == '\n')
+		++i;
+	ret = ft_substr(leftover, i);
+	leftover_len = ft_strlen(leftover + i, '\0');
+	ft_memcpy(leftover, leftover + i, leftover_len);
+	leftover[leftover_len] = '\0';
+	return (ret);
+}
+
+char	*get_next_line(int fd)
+{
+	char		*ret;
+	static char	*leftover;
+	int			bytes_read;
+
+	if (fd < 0 || BUFFER_SIZE < 1)
+	{
+		free(leftover);
+		leftover = NULL;
+		return (NULL);
+	}
+	bytes_read = read_from_file(fd, &leftover);
+	if (leftover == NULL)
+		return (NULL);
+	ret = extract_line(leftover);
+	if (!ret && !bytes_read)
+	{
+		free(leftover);
+		leftover = NULL;
+		return (NULL);
+	}
+	return (ret);
+}
