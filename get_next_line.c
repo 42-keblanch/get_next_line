@@ -6,7 +6,7 @@
 /*   By: keblanch <keblanch@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/10/23 11:24:09 by keblanch          #+#    #+#             */
-/*   Updated: 2026/10/26 19:36:04 by keblanch         ###   ########.fr       */
+/*   Updated: 2026/10/27 15:05:34 by keblanch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,8 +36,8 @@ static int	concat(char **dest, char *src)
 		return (0);
 	dest_len = 0;
 	if (*dest)
-		dest_len = ft_strlen(*dest, '\0');
-	src_len = ft_strlen(src, '\0');
+		dest_len = gnl_strlen(*dest, '\0');
+	src_len = gnl_strlen(src, '\0');
 	t = ft_calloc(dest_len + src_len + 1, sizeof(char));
 	if (!t)
 		return (0);
@@ -69,7 +69,8 @@ static int	read_from_file(int fd, char **leftover)
 			return (bytes_read);
 		}
 		buf[bytes_read] = '\0';
-		concat(leftover, buf);
+		if (!concat(leftover, buf))
+			bytes_read = 0;
 	}
 	free(buf);
 	return (bytes_read);
@@ -83,13 +84,13 @@ static char	*extract_line(char *leftover)
 
 	if (!leftover[0])
 		return (NULL);
-	i = ft_strlen(leftover, '\n');
+	i = gnl_strlen(leftover, '\n');
 	if (leftover[i] == '\n')
 		++i;
-	ret = ft_substr(leftover, i);
+	ret = gnl_substr(leftover, i);
 	if (!ret)
 		return (NULL);
-	leftover_len = ft_strlen(leftover + i, '\0');
+	leftover_len = gnl_strlen(leftover + i, '\0');
 	ft_memcpy(leftover, leftover + i, leftover_len);
 	leftover[leftover_len] = '\0';
 	return (ret);

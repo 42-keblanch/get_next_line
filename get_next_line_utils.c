@@ -6,7 +6,7 @@
 /*   By: keblanch <keblanch@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/10/23 11:24:56 by keblanch          #+#    #+#             */
-/*   Updated: 2026/10/24 14:47:29 by keblanch         ###   ########.fr       */
+/*   Updated: 2026/10/27 15:05:35 by keblanch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ size_t	check_for_nl(char *s)
 	return (0);
 }
 
-size_t	ft_strlen(char *s, char c)
+size_t	gnl_strlen(char *s, char c)
 {
 	size_t	i;
 
@@ -60,7 +60,7 @@ void	*ft_calloc(size_t nmemb, size_t size)
 
 	s = 0;
 	i = 0;
-	if (nmemb != 0 && (UINT_MAX / nmemb < size))
+	if (nmemb != 0 && (((size_t) - 1) / nmemb < size))
 		return (s);
 	s = malloc(nmemb * size);
 	if (!s)
@@ -73,7 +73,7 @@ void	*ft_calloc(size_t nmemb, size_t size)
 	return ((void *)s);
 }
 
-char	*ft_substr(const char *s, size_t len)
+char	*gnl_substr(const char *s, size_t len)
 {
 	char	*ret;
 	size_t	i;
