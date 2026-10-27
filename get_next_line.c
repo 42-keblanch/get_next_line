@@ -6,7 +6,7 @@
 /*   By: keblanch <keblanch@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/10/23 11:24:09 by keblanch          #+#    #+#             */
-/*   Updated: 2026/10/27 15:05:34 by keblanch         ###   ########.fr       */
+/*   Updated: 2026/10/27 16:37:56 by keblanch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,9 @@ static int	read_from_file(int fd, char **leftover)
 {
 	char	*buf;
 	int		bytes_read;
+	int		has_concat;
 
+	has_concat = 1;
 	buf = ft_calloc(BUFFER_SIZE + 1, sizeof(char));
 	if (!buf)
 	{
@@ -60,18 +62,17 @@ static int	read_from_file(int fd, char **leftover)
 		return (0);
 	}
 	bytes_read = 1;
-	while (bytes_read > 0 && !check_for_nl(*leftover))
+	while (bytes_read > 0 && !check_for_nl(*leftover) && has_concat)
 	{
 		bytes_read = read(fd, buf, BUFFER_SIZE);
-		if (bytes_read < 0)
+		if (bytes_read >= 0)
 		{
-			free_leftover_and_buf(leftover, &buf);
-			return (bytes_read);
+			buf[bytes_read] = '\0';
+			has_concat = concat(leftover, buf);
 		}
-		buf[bytes_read] = '\0';
-		if (!concat(leftover, buf))
-			bytes_read = 0;
 	}
+	if (!has_concat || bytes_read < 0)
+		free_leftover_and_buf(leftover, NULL);
 	free(buf);
 	return (bytes_read);
 }
