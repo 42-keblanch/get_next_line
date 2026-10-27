@@ -20,8 +20,8 @@ The goal of this project is to create a function (`get_next_line`) that reads a 
 
 If this project was downloaded from github, you should also be able to create a testing program.
 
-- To run tests, run `make -C tests`
-  - The resulting `test_gnl` program should display the file provided as argument.
+- To run tests, run `make` from the tests directory
+  - The resulting `test_gnl` program should display the file provided as argument, or use the standard input if no file are provided. Use `Ctrl + D` to cleanly close the program when using the standard input.
 
 ## Ressources
 
@@ -53,6 +53,7 @@ int main(int argc, char **argv)
 {
     char    *line;
     int     fd;
+
     if (argc > 1)
         fd = open(argv[1], O_RDONLY);
     else
@@ -65,13 +66,6 @@ int main(int argc, char **argv)
         printf("%s", line);
         free(line);
         line = get_next_line(fd);
-        if (line[0] == '!' && line[1] == 'q'
-            && (line[2] == '\n' || line[2] == '\0'))
-        {
-            free(line);
-            line = NULL;
-            get_next_line(-1);
-        }
     }
     close(fd);
     return (0);
