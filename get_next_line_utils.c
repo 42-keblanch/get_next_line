@@ -6,7 +6,7 @@
 /*   By: keblanch <keblanch@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/10/23 11:24:56 by keblanch          #+#    #+#             */
-/*   Updated: 2026/10/23 11:25:07 by keblanch         ###   ########.fr       */
+/*   Updated: 2026/10/24 14:47:29 by keblanch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ size_t	check_for_nl(char *s)
 	size_t	i;
 
 	i = 0;
-	while (s[i])
+	while (s && s[i])
 	{
 		if (s[i] == '\n')
 			return (i + 1);
@@ -42,6 +42,8 @@ void	*ft_memcpy(void *dest, const void *src, size_t n)
 {
 	size_t	i;
 
+	if (!src)
+		return (dest);
 	i = 0;
 	while (i < n)
 	{
