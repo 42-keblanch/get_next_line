@@ -1,4 +1,5 @@
 NAME = gnl_test.out
+NAME_BONUS = gnl_test_bonus.out
 CC = cc
 CFLAGS = -Wall -Wextra -Werror -g
 BUFF_SIZE = 1
@@ -12,8 +13,12 @@ GREEN = \e[0;32m
 SRC_DIR = ..
 SRCS = $(SRC_DIR)/get_next_line.c \
 	   $(SRC_DIR)/get_next_line_utils.c
+SRCS_BONUS = $(SRC_DIR)/get_next_line_bonus.c \
+			 $(SRC_DIR)/get_next_line_utils_bonus.c
 TEST_MAIN = main.c
+TEST_MAIN_BONUS = main_bonus.c
 OBJS = $(SRCS:.c=.o)
+OBJS_BONUS = $(SRCS_BONUS:.c=.o)
 
 EMPTY = empty.txt
 NL = nl.txt
@@ -33,17 +38,22 @@ $(NAME): $(OBJS) $(TEST_MAIN)
 	@$(CC) $(CFLAGS) $^ -o $@ -I$(SRC_DIR)
 	@printf "${YELLOW}Building tests ${BLUE}$@\n${NEUTRAL}"
 
+bonus: $(NAME_BONUS)
+
+$(NAME_BONUS): $(OBJS_BONUS) $(TEST_MAIN_BONUS)
+	@$(CC) $(CFLAGS) $^ -o $@ -I$(SRC_DIR)
+	@printf "${YELLOW}Building tests ${BLUE}$@\n${NEUTRAL}"
+
 %.o: %.c
 	@$(CC) $(CFLAGS) $(BUFF_FLAG) -o $@ -c $^
 	@printf "Compiling ${BLUE}$^\n${NEUTRAL}"
 
 fclean: clean
-	@rm -f $(NAME)
-	@rm -f $(LOG_FILE)
+	@rm -f $(NAME) $(LOG_FILE)
 	@printf "${RED}Deleting logs and binaries\n${NEUTRAL}"
 
 clean:
-	@rm -f $(OBJS)
+	@rm -f $(OBJS) $(OBJS_BONUS)
 	@printf "${RED}Deleting object files\n${NEUTRAL}"
 
 tests: $(TEST_FILES) $(NAME)
@@ -63,4 +73,4 @@ tests: $(TEST_FILES) $(NAME)
 	@printf ">>" 1>>$(LOG_FILE)
 	@printf "Test results available in ${BLUE}${LOG_FILE}${NEUTRAL}"
 
-.PHONY: all fclean clean re tests
+.PHONY: all fclean clean re tests bonus
